@@ -15,5 +15,15 @@ const JOKE =
 
 const OUTPUT_PATH = "/output/entry.txt";
 
+// The gate scores /output/entry.txt as valid only when it is UTF-8 text of
+// 1 to 200 characters and not only white space, so enforce that contract
+// here instead of trusting the literal: a joke that drifted past the cap
+// must fail loudly at build time, never ship as an invalid entry.
+if (JOKE.length < 1 || JOKE.length > 200 || JOKE.trim().length === 0) {
+  throw new Error(
+    `joke must be 1-200 non-blank characters, got ${JOKE.length}`,
+  );
+}
+
 mkdirSync("/output", { recursive: true });
 writeFileSync(OUTPUT_PATH, JOKE, "utf8");
